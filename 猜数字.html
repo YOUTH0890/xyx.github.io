@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>猜数字游戏</title>
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #f2f2f2;
+    }
+
+    .container {
+      text-align: center;
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .game-message {
+      margin-bottom: 10px;
+    }
+
+    .game-buttons {
+      margin-top: 20px;
+    }
+
+    .game-input {
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>猜数字游戏</h1>
+    <p class="game-message">我已经生成了一个1到100之间的随机数字，请开始猜测。</p>
+
+    <div id="game-container" style="display: none;">
+      <input type="number" id="guess-input" class="game-input" placeholder="请输入数字">
+      <button onclick="checkGuess()" class="game-buttons">猜一下</button>
+
+      <p id="result"></p>
+      <p id="timer"></p>
+
+      <button onclick="resetGame()" class="game-buttons">再来一次</button>
+    </div>
+
+    <button onclick="startGame()" class="game-buttons">开始游戏</button>
+  </div>
+
+  <script>
+    var targetNumber;
+    var attempts = 0;
+    var startTime;
+    var timeLimit = 10 * 60 * 1000; // 10分钟的时间限制
+
+    var timerElement = document.getElementById('timer');
+    var timerId;
+
+    function startGame() {
+      targetNumber = Math.floor(Math.random() * 100) + 1;
+      attempts = 0;
+      startTime = Date.now();
+      timerElement.textContent = '';
+
+      var gameContainer = document.getElementById('game-container');
+      gameContainer.style.display = 'block';
+
+      var startButton = document.querySelector('.game-buttons');
+      startButton.disabled = true;
+
+      timerId = setInterval(updateTimer, 1000);
+    }
+
+    function updateTimer() {
+      var elapsedTime = Date.now() - startTime;
+      var remainingTime = Math.max(0, timeLimit - elapsedTime);
+      var minutes = Math.floor(remainingTime / 60000);
+      var seconds = Math.floor((remainingTime % 60000) / 1000);
+
+      timerElement.textContent = '剩余时间：' + minutes + '分' + seconds + '秒';
+
+      if (remainingTime <= 0) {
+        clearInterval(timerId);
+        disableInput();
+        showResult('时间已到，游戏结束！');
+      }
+    }
+
+    function checkGuess() {
+      var guessInput = document.getElementById('guess-input');
+      var guess = parseInt(guessInput.value);
+      attempts++;
+
+      if (isNaN(guess)) {
+        showResult('无效的输入，请输入一个整数。');
+      } else if (guess < targetNumber) {
+        showResult('猜小了，请继续猜测。');
+      } else if (guess > targetNumber) {
+        showResult('猜大了，请继续猜测。');
+      } else {
+        disableInput();
+        showResult('恭喜！您猜对了数字 ' + targetNumber + '，共猜测了 ' + attempts + ' 次。');
+      }
+
+      guessInput.value = '';
+    }
+
+    function disableInput() {
+      var guessInput = document.getElementById('guess-input');
+      guessInput.disabled = true;
+    }
+
+    function showResult(message) {
+      var resultElement = document.getElementById('result');
+      resultElement.textContent = message;
+    }
+
+    function resetGame() {
+      var gameContainer = document.getElementById('game-container');
+      gameContainer.style.display = 'none';
+
+      var startButton = document.querySelector('.game-buttons');
+      startButton.disabled = false;
+
+      clearInterval(timerId);
+    }
+  </script>
+</body>
+</html>
