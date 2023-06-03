@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>ChatGPT小游戏</title>
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-image: url("http://bbs1.people.com.cn/img_new/Y0/83/89/44/E7/1685833991399.jpeg");
+      background-position: center;
+      background-repeat: no-repeat;
+      background-size: cover;
+    }
+
+    .title-layer {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .button-layer {
+      text-align: center;
+    }
+
+    .btn {
+      background-color: blue;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    .btn:hover {
+      opacity: 0.8;
+    }
+  </style>
+</head>
+<body>
+  <div class="title-layer">
+    <h1>ChatGPT小游戏</h1>
+  </div>
+
+  <div class="button-layer">
+    <button class="btn" onclick="redirectToGamePage()">猜数字</button>
+  </div>
+
+  <script>
+    function redirectToGamePage() {
+      window.location.href = "index2.html";
+    }
+  </script>
+</body>
+</html>
