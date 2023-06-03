@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>扫雷游戏</title>
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .game-board {
+      display: grid;
+      grid-template-columns: repeat(var(--size), 1fr);
+      gap: 1px;
+    }
+
+    .cell {
+      background-color: #c0c0c0;
+      border: 1px solid #808080;
+      padding: 0;
+      font-size: 0;
+      cursor: pointer;
+    }
+
+    .cell:hover {
+      background-color: #dcdcdc;
+    }
+
+    .cell.revealed {
+      background-color: #f0f0f0;
+    }
+
+    .cell.mine {
+      background-color: red;
+    }
+
+    .cell.flagged {
+      background-color: yellow;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>扫雷游戏</h1>
+    <div class="game-board"></div>
+  </div>
+
+  <script>
+    var boardSize = 10; // 游戏板大小
+    var mineCount = 10; // 地雷数量
+    var board = [];
+    var revealedCount = 0;
+    var flaggedCount = 0;
+
+    function createBoard() {
+      for (var i = 0; i < boardSize; i++) {
+        var row = [];
+        for (var j = 0; j < boardSize; j++) {
+          row.push({
+            mine: false,
+            revealed: false,
+            flagged: false,
+            count: 0
+          });
+        }
+        board.push(row);
+      }
+    }
+
+    function plantMines() {
+      var count = 0;
+      while (count < mineCount) {
+        var row = Math.floor(Math.random() * boardSize);
+        var col = Math.floor(Math.random() * boardSize);
+        var cell = board[row][col];
+        if (!cell.mine) {
+          cell.mine = true;
+          count++;
+        }
+      }
+    }
+
+    function calculateCounts() {
+      for (var i = 0; i < boardSize; i++) {
+        for (var j = 0; j < boardSize; j++) {
+          var cell = board[i][j];
+          if (!cell.mine) {
+            cell.count = countMines(i, j);
+          }
+        }
+      }
+    }
+
+    function countMines(row, col) {
+      var count = 0;
+      for (var di = -1; di <= 1; di++) {
+        for (var dj = -1; dj <= 1; dj++) {
+          var ni = row + di;
+          var nj = col + dj;
+          if (ni >= 0 && ni < boardSize && nj >= 0 && nj < boardSize) {
+            if (board[ni][nj].mine) {
+              count++;
+            }
+          }
+        }
+      }
+      return count;
+    }
+
+    function revealCell(row, col) {
+      var cell = board[row][col];
+      if (cell.revealed || cell.flagged) {
+        return;
+      }
+      cell.revealed = true;
+      revealedCount++;
+      var cellElement = document.getElementById("cell-" + row + "-" + col);
+      cellElement.classList.add("revealed");
+
+      if (cell.mine) {
+        showGameOver();
+      } else if (cell.count === 0) {
+        revealNeighbors(row, col);
+      } else {
+        cellElement.textContent = cell.count;
+      }
+      checkWin();
+    }
+
+    function revealNeighbors(row, col) {
+      for (var di = -1; di <= 1; di++) {
+        for (var dj = -1; dj <= 1; dj++) {
+          var ni = row + di;
+          var nj = col + dj;
+          if (ni >= 0 && ni < boardSize && nj >= 0 && nj < boardSize) {
+            revealCell(ni, nj);
+          }
+        }
+      }
+    }
+
+    function toggleFlag(row, col) {
+      var cell = board[row][col];
+      if (cell.revealed) {
+        return;
+      }
+      cell.flagged = !cell.flagged;
+      var cellElement = document.getElementById("cell-" + row + "-" + col);
+      cellElement.classList.toggle("flagged");
+      checkWin();
+    }
+
+    function checkWin() {
+      if (revealedCount === (boardSize * boardSize) - mineCount) {
+        showGameWin();
+      }
+    }
+
+    function showGameOver() {
+      setTimeout(function() {
+        alert("游戏失败！点击确定重新开始。");
+        resetGame();
+      }, 100);
+    }
+
+    function showGameWin() {
+      setTimeout(function() {
+        alert("恭喜！游戏胜利！点击确定重新开始。");
+        resetGame();
+      }, 100);
+    }
+
+    function resetGame() {
+      board = [];
+      revealedCount = 0;
+      flaggedCount = 0;
+      createBoard();
+      plantMines();
+      calculateCounts();
+      renderBoard();
+    }
+
+    function renderBoard() {
+      var gameBoard = document.querySelector(".game-board");
+      gameBoard.innerHTML = "";
+      gameBoard.style.gridTemplateColumns = "repeat(" + boardSize + ", 1fr)";
+
+      for (var i = 0; i < boardSize; i++) {
+        for (var j = 0; j < boardSize; j++) {
+          var cell = board[i][j];
+          var cellElement = document.createElement("div");
+          cellElement.id = "cell-" + i + "-" + j;
+          cellElement.classList.add("cell");
+          cellElement.addEventListener("click", function(row, col) {
+            return function() {
+              revealCell(row, col);
+            };
+          }(i, j));
+          cellElement.addEventListener("dblclick", function(row, col) {
+            return function() {
+              toggleFlag(row, col);
+            };
+          }(i, j));
+          gameBoard.appendChild(cellElement);
+        }
+      }
+    }
+
+    resetGame();
+  </script>
+</body>
+</html>
