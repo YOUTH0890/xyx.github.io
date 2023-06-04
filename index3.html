@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Windows Interface</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-image: url("http://bbs1.people.com.cn/img_new/Y0/85/A1/29/D8/1685869111768.jpeg");
+      background-size: cover;
+    }
+    
+    .window {
+      background-color: #fff;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      width: 400px;
+      height: 300px;
+      margin: 50px auto;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+      overflow: hidden;
+    }
+    
+    .title-bar {
+      background-color: #0078d7;
+      border-bottom: 1px solid #ccc;
+      padding: 10px;
+      text-align: center;
+      cursor: move;
+      color: #fff;
+    }
+
+    .power-button {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      background-color: #ff0000;
+      border-radius: 50%;
+      margin-right: 10px;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+    
+    .power-button:hover {
+      transform: scale(1.1);
+    }
+    
+    .power-button.clicked {
+      animation: blink 1s infinite;
+    }
+    
+    @keyframes blink {
+      0% { opacity: 1; }
+      50% { opacity: 0; }
+      100% { opacity: 1; }
+    }
+    
+    .content {
+      padding: 20px;
+    }
+    
+    .desktop {
+      display: none;
+      background-color: rgba(255, 255, 255, 0.5);
+      height: 100%;
+      padding: 10px;
+    }
+    
+    .desktop.visible {
+      display: block;
+    }
+    
+    .password-input {
+      margin-top: 20px;
+      display: flex;
+      align-items: center;
+    }
+    
+    .password-input input[type="password"] {
+      padding: 5px;
+      margin-right: 10px;
+    }
+    
+    .password-input button {
+      padding: 5px 10px;
+    }
+    
+    .shortcut {
+      display: inline-block;
+      margin: 20px;
+      text-align: center;
+      color: #333;
+      transition: transform 0.2s;
+      cursor: pointer;
+    }
+    
+    .shortcut:hover {
+      transform: scale(1.1);
+    }
+    
+    .shortcut img {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      border: 2px solid #0078d7;
+    }
+    
+    .shortcut span {
+      display: block;
+      margin-top: 5px;
+    }
+    
+    .zoom-in-out {
+      animation: zoomInOut 1s infinite alternate;
+    }
+    
+    @keyframes zoomInOut {
+      0% { transform: scale(1); }
+      100% { transform: scale(1.2); }
+    }
+    
+    .fullscreen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(255, 255, 255, 0.8);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    .fullscreen-content {
+      text-align: center;
+    }
+    
+    .fullscreen-text {
+      font-size: 24px;
+      font-weight: bold;
+      color: red;
+      margin-bottom: 20px;
+    }
+    
+    .return-button {
+      padding: 10px 20px;
+      background-color: #0078d7;
+      color: #fff;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+  </style>
+  <script>
+    function powerOn() {
+      var powerButton = document.querySelector('.power-button');
+      var desktop = document.querySelector('.desktop');
+      var passwordInput = document.querySelector('.password-input');
+      var passwordButton = document.querySelector('.password-input button');
+      var shortcut = document.querySelector('.shortcut');
+      var fullscreen = document.querySelector('.fullscreen');
+      var returnButton = document.querySelector('.return-button');
+      
+      powerButton.addEventListener('click', function() {
+        passwordInput.style.display = 'flex';
+        powerButton.classList.add('clicked');
+        
+        setTimeout(function() {
+          powerButton.classList.remove('clicked');
+        }, 1000);
+      });
+      
+      passwordButton.addEventListener('click', function() {
+        var passwordInputValue = document.querySelector('.password-input input').value;
+        
+        if (passwordInputValue === '123456') {
+          desktop.classList.add('visible');
+          passwordInput.style.display = 'none';
+        } else {
+          alert('密码错误，请重试！');
+        }
+      });
+      
+      shortcut.addEventListener('click', function() {
+        shortcut.classList.add('zoom-in-out');
+        fullscreen.style.display = 'flex';
+      });
+      
+      returnButton.addEventListener('click', function() {
+        shortcut.classList.remove('zoom-in-out');
+        fullscreen.style.display = 'none';
+      });
+    }
+    
+    window.addEventListener('load', powerOn);
+  </script>
+</head>
+<body>
+  <div class="window">
+    <div class="title-bar">
+      <div class="power-button"></div>
+      <span>Windows Interface</span>
+    </div>
+    <div class="content">
+      <p>This is a Windows-like interface created with HTML and CSS.</p>
+    </div>
+  </div>
+  
+  <div class="desktop">
+    <div class="shortcut">
+      <img src="http://bbs1.people.com.cn/img_new/Y0/85/66/67/C0/1685865260992.jpeg" alt="光遇图标">
+      <span>光遇</span>
+    </div>
+    <div class="shortcut">
+      <img src="https://example.com/minecraft-icon.png" alt="Minecraft图标">
+      <span>Minecraft</span>
+    </div>
+  </div>
+  
+  <div class="password-input" style="display: none;">
+    <input type="password" placeholder="Enter password">
+    <button>Submit</button>
+  </div>
+  
+  <div class="fullscreen" style="display: none;">
+    <div class="fullscreen-content">
+      <div class="fullscreen-text">傻逼网页上玩光遇想啥呢</div>
+      <button class="return-button">返回桌面</button>
+    </div>
+  </div>
+  
+  <script>
+    function launchMinecraft() {
+      // 在此处编写打开Minecraft的代码逻辑
+    }
+    
+    var minecraftShortcut = document.querySelector('.shortcut:nth-child(2)');
+    minecraftShortcut.addEventListener('click', launchMinecraft);
+  </script>
+</body>
+</html>
